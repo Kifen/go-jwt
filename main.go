@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/Kifen/go-jwt/common"
 	"log"
 	"net/http"
@@ -15,7 +14,7 @@ func main() {
 	if port == "" {
 		port = "3000"
 	}
-	fmt.Printf("Listening on port :%s", port)
+	log.Printf("Listening on port :%s", port)
 	err := http.ListenAndServe(":" + port, router)
 	if err !=nil {
 		log.Fatal("ListenAndServe: ", err)
