@@ -1,1 +1,1 @@
-web: ./go-jwt
+web: bin/go-jwt
