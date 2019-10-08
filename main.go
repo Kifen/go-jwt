@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Kifen/go-jwt/common"
 	"log"
 	"net/http"
@@ -9,10 +10,19 @@ import (
 
 func main() {
 	router := common.HandleRequests()
-	os.Setenv("PORT", ":3000")
-	port := os.Getenv("PORT")
-	// Start a basic HTTP server
-	if err := http.ListenAndServe(port, router); err != nil {
-		log.Fatal(err)
+	fmt.Println("listening...")
+	err := http.ListenAndServe(GetPort(), router)
+	if err !=nil {
+		log.Fatal("ListenAndServe: ", err)
 	}
+}
+
+func GetPort() string {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
+	}
+
+	return ":" + port
 }
