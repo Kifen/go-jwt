@@ -392,12 +392,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/main.go</url>
-          <line>10</line>
+          <line>11</line>
           <option name="timeStamp" value="125" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/main.go</url>
-          <line>11</line>
+          <line>18</line>
           <option name="timeStamp" value="126" />
         </line-breakpoint>
       </breakpoints>
