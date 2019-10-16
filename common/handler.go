@@ -114,7 +114,13 @@ func signIn(writer http.ResponseWriter, request *http.Request) {
 }
 
 func signUp(writer http.ResponseWriter, request *http.Request) {
+	type response struct {
+		Msg       string    `json:"msg"`
+		TokenPair *JwtToken `json:"token-pair"`
+	}
 	var cred *Credentials
+	var result *response
+
 	reqBody, _ := ioutil.ReadAll(request.Body)
 	err := json.Unmarshal(reqBody, &cred)
 	if err != nil {
@@ -143,10 +149,6 @@ func signUp(writer http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		//fmt.Fprintf(writer, "Credentials %s created successfully", cred.Email)
-		val := fmt.Sprintf("User %s created successfully", cred.Email)
-		writer.Write([]byte(val))
-		fmt.Println()
 
 		tokenPair, err := createTokenPair(cred)
 		if err != nil {
@@ -154,8 +156,13 @@ func signUp(writer http.ResponseWriter, request *http.Request) {
 			writer.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-
-		json.NewEncoder(writer).Encode(tokenPair)
+		writer.Header().Set("Content-Type", "application/json")
+		val := fmt.Sprintf("User %s created successfully", cred.Email)
+		result = &response{
+			Msg:       val,
+			TokenPair: tokenPair,
+		}
+		json.NewEncoder(writer).Encode(result)
 	} else {
 		val := fmt.Sprintf("User %s already exists", cred.Email)
 		writer.Write([]byte(val))
@@ -175,7 +182,7 @@ func getRefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if (user.Password == cred.Password && user.Email == cred.Email) {
+	if user.Password == cred.Password && user.Email == cred.Email {
 		log.Println("in true")
 		newTokenPair, err := createTokenPair(cred)
 		if err != nil {
