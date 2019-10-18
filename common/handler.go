@@ -33,7 +33,7 @@ type JwtToken struct {
 func HandleRequests() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/signup", signUp)
-	//router.HandleFunc("/signin", signIn)
+	router.Handle("/signin", ValidateToken(http.HandlerFunc(signIn)))
 	router.Handle("/getuserid/{email}", ValidateToken(http.HandlerFunc(getUserId)))
 	router.Handle("/getaccesstoken", RefreshTokenMiddleware(http.HandlerFunc(getRefreshToken)))
 	return router
@@ -90,7 +90,14 @@ func getId(email string) (Credentials, error) {
 }
 
 func signIn(writer http.ResponseWriter, request *http.Request) {
+	type response struct {
+		Msg       string    `json:"msg"`
+		TokenPair *JwtToken `json:"token-pair"`
+	}
+
+	var resp *response
 	var creds *Credentials
+
 	writer.Header().Set("Content-Type", "application/json")
 	reqBody, _ := ioutil.ReadAll(request.Body)
 	err := json.Unmarshal(reqBody, &creds)
@@ -106,10 +113,15 @@ func signIn(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if user.Email == creds.Email && user.Password == creds.Password {
-		//decoded := context.Get(request, "decoded")
-		var user Credentials
-		//mapstructure.Decode(decoded.(jwt.MapClaims), &user)
-		json.NewEncoder(writer).Encode(user)
+		tokenPair, err := createTokenPair(creds)
+		if err != nil {
+			writer.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		val := fmt.Sprintf("Login successfull")
+		resp = &response{Msg: val, TokenPair: tokenPair}
+
+		json.NewEncoder(writer).Encode(resp)
 	}
 }
 
