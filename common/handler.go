@@ -293,7 +293,7 @@ func createTokenPair(cred *Credentials) (*JwtToken, error) {
 	claims["name"] = cred.Email
 	claims["sub"] = 1
 	claims["authorized"] = true
-	claims["exp"] = time.Now().Add(time.Minute * 10).Unix()
+	claims["exp"] = time.Now().Add(time.Minute * 5).Unix()
 	access_token, err := token.SignedString([]byte(JwtSecret))
 	if err != nil {
 		return nil, err
@@ -302,7 +302,7 @@ func createTokenPair(cred *Credentials) (*JwtToken, error) {
 	refreshToken := jwt.New(jwt.SigningMethodHS256)
 	rtClaims := refreshToken.Claims.(jwt.MapClaims)
 	rtClaims["sub"] = 1
-	rtClaims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+	rtClaims["exp"] = time.Now().Add(time.Hour * 10).Unix()
 	refresh_token, err := refreshToken.SignedString([]byte(JwtSecret))
 	if err != nil {
 		return nil, err
