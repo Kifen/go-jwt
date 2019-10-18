@@ -29,15 +29,8 @@ func ValidateToken(next http.HandlerFunc) http.HandlerFunc {
 			})
 
 			if err != nil {
-				errValue := err.Error()
-				expiredToken := "Token is expired"
-				invalidToken := "signature is invalid"
-				if strings.Contains(errValue, expiredToken){
-					json.NewEncoder(w).Encode(expiredToken)
-				} else{
-					json.NewEncoder(w).Encode(invalidToken)
-				}
 				log.Println(err)
+				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
 
