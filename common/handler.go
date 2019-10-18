@@ -302,7 +302,7 @@ func createTokenPair(cred *Credentials) (*JwtToken, error) {
 	refreshToken := jwt.New(jwt.SigningMethodHS256)
 	rtClaims := refreshToken.Claims.(jwt.MapClaims)
 	rtClaims["sub"] = 1
-	rtClaims["exp"] = time.Now().Add(time.Hour * 10).Unix()
+	rtClaims["exp"] = time.Now().Add(time.Hour * 4380).Unix()
 	refresh_token, err := refreshToken.SignedString([]byte(JwtSecret))
 	if err != nil {
 		return nil, err
