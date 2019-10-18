@@ -33,7 +33,7 @@ type JwtToken struct {
 func HandleRequests() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/signup", signUp)
-	router.Handle("/signin", ValidateToken(http.HandlerFunc(signIn)))
+	router.HandleFunc("/signin", signIn)
 	router.Handle("/getuserid/{email}", ValidateToken(http.HandlerFunc(getUserId)))
 	router.Handle("/getaccesstoken", RefreshTokenMiddleware(http.HandlerFunc(getRefreshToken)))
 	return router
